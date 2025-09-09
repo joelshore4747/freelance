@@ -1,0 +1,180 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Enhanced color system with Caribbean blue variations */
+  --background: oklch(1 0 0); /* Pure white background */
+  --foreground: oklch(0.145 0 0); /* Dark text for maximum contrast */
+  --card: oklch(1 0 0); /* White cards */
+  --card-foreground: oklch(0.145 0 0); /* Dark text on cards */
+  --popover: oklch(1 0 0); /* White popover */
+  --popover-foreground: oklch(0.145 0 0); /* Dark text in popovers */
+
+  /* Enhanced Caribbean blue color system */
+  --primary: oklch(0.488 0.084 205.882); /* Caribbean Current - Deep teal blue */
+  --primary-foreground: oklch(0.985 0 0); /* White text on primary */
+  --secondary: oklch(0.777 0.068 187.477); /* Light Caribbean blue */
+  --secondary-foreground: oklch(0.145 0 0); /* Dark text on secondary */
+  --accent: oklch(0.555 0.095 208.001); /* Medium Caribbean blue for accents */
+  --accent-foreground: oklch(0.985 0 0); /* White text on accent */
+  --standout: oklch(0.74 0.102 41.397); /* Coral orange for standout text */
+  --standout-foreground: oklch(0.985 0 0); /* White text on standout */
+
+  --muted: oklch(0.97 0 0); /* Light gray for muted elements */
+  --muted-foreground: oklch(0.556 0 0); /* Medium gray for muted text */
+  --destructive: oklch(0.577 0.245 27.325); /* Red for errors */
+  --destructive-foreground: oklch(0.985 0 0); /* White text on red */
+  --border: oklch(0.922 0 0); /* Light gray borders */
+  --input: oklch(0.97 0 0); /* Light input fields */
+  --ring: oklch(0.4 0.15 200); /* Primary color ring */
+
+  /* Enhanced section backgrounds with Caribbean blues */
+  --section-primary: oklch(0.488 0.084 205.882); /* Caribbean Current - Deep teal blue */
+  --section-primary-foreground: oklch(0.985 0 0); /* White text on primary sections */
+  --section-secondary: oklch(0.777 0.068 187.477); /* Light Caribbean blue */
+  --section-secondary-foreground: oklch(0.145 0 0); /* Dark text on light sections */
+  --section-accent: oklch(0.555 0.095 208.001); /* Medium Caribbean blue for accents */
+  --section-accent-foreground: oklch(0.985 0 0); /* White text on accent sections */
+  --section-white: oklch(0.967 0.01 219.588); /* Pure white sections */
+  --section-white-foreground: oklch(0.145 0 0); /* Dark text on white sections */
+  --section-muted: oklch(0.923 0.041 38.731); /* Very light gray sections */
+  --section-muted-foreground: oklch(0.145 0 0); /* Dark text on muted sections */
+
+  --chart-1: oklch(0.488 0.084 205.882); /* Caribbean Current - Deep teal blue */
+  --chart-2: oklch(0.555 0.095 208.001);
+  --chart-3: oklch(0.777 0.068 187.477);
+  --chart-4: oklch(0.74 0.102 41.397);
+  --chart-5: oklch(0.7 0.1 180);
+  --radius: 0.75rem; /* Slightly larger radius for modern look */
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.488 0.084 205.882); /* Caribbean Current - Deep teal blue */
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.145 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.488 0.084 205.882); /* Caribbean Current - Deep teal blue */
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.2 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.2 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.6 0.12 200);
+  --primary-foreground: oklch(0.145 0 0);
+  --secondary: oklch(0.3 0.05 200);
+  --secondary-foreground: oklch(0.985 0 0);
+  --accent: oklch(0.4 0.15 200);
+  --accent-foreground: oklch(0.985 0 0);
+  --standout: oklch(0.65 0.2 25);
+  --standout-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --destructive: oklch(0.6 0.2 25);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.3 0 0);
+  --input: oklch(0.3 0 0);
+  --ring: oklch(0.6 0.12 200);
+}
+
+@theme inline {
+  --font-sans: "Inter", var(--font-geist-sans);
+  --font-serif: "Plus Jakarta Sans", var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Enhanced color mappings with Caribbean blues and standout color */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-standout: var(--standout);
+  --color-standout-foreground: var(--standout-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-section-primary: var(--section-primary);
+  --color-section-primary-foreground: var(--section-primary-foreground);
+  --color-section-secondary: var(--section-secondary);
+  --color-section-secondary-foreground: var(--section-secondary-foreground);
+  --color-section-accent: var(--section-accent);
+  --color-section-accent-foreground: var(--section-accent-foreground);
+  --color-section-white: var(--section-white);
+  --color-section-white-foreground: var(--section-white-foreground);
+  --color-section-muted: var(--section-muted);
+  --color-section-muted-foreground: var(--section-muted-foreground);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Added utility classes for standout text and section backgrounds */
+@layer utilities {
+  .text-standout {
+    color: var(--color-standout);
+  }
+  .bg-standout {
+    background-color: var(--color-standout);
+  }
+  .bg-section-primary {
+    background-color: var(--color-section-primary);
+    color: var(--color-section-primary-foreground);
+  }
+  .bg-section-secondary {
+    background-color: var(--color-section-secondary);
+    color: var(--color-section-secondary-foreground);
+  }
+  .bg-section-accent {
+    background-color: var(--color-section-accent);
+    color: var(--color-section-accent-foreground);
+  }
+  .bg-section-white {
+    background-color: var(--color-section-white);
+    color: var(--color-section-white-foreground);
+  }
+  .bg-section-muted {
+    background-color: var(--color-section-muted);
+    color: var(--color-section-muted-foreground);
+  }
+}
