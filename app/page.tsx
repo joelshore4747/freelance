@@ -68,34 +68,47 @@ function useCarousel(itemsLength: number) {
 
 function useScrollAnimation() {
     useEffect(() => {
-        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-
         const observer = new IntersectionObserver(
             (entries) => {
-                entries.forEach((entry, i) => {
-                    if (!entry.isIntersecting) return
-
-                    const run = () => {
-                        entry.target.classList.add("opacity-100", "translate-y-0")
-                        entry.target.classList.remove("opacity-0", "translate-y-3")
-                        observer.unobserve(entry.target) // animate once
-                    }
-
-                    if (prefersReducedMotion) {
-                        run()
-                    } else {
-                        setTimeout(run, i * 70) // tiny stagger
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("animate-scroll-fade-up")
+                        // Add parallax effect to certain elements
+                        if (entry.target.classList.contains("parallax-element")) {
+                            entry.target.classList.add("animate-parallax-reveal")
+                        }
                     }
                 })
             },
-            { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+            {
+                threshold: 0.1,
+                rootMargin: "0px 0px -80px 0px", // Trigger animation earlier for smoother effect
+            },
         )
 
-        document.querySelectorAll<HTMLElement>(".scroll-animate").forEach((el) => observer.observe(el))
-        return () => observer.disconnect()
+        const elements = document.querySelectorAll(".scroll-animate")
+        elements.forEach((el) => observer.observe(el))
+
+        // Add parallax scrolling effect
+        const handleScroll = () => {
+            const scrolled = window.pageYOffset
+            const parallaxElements = document.querySelectorAll(".parallax-bg")
+
+            parallaxElements.forEach((element) => {
+                const speed = 0.5
+                const yPos = -(scrolled * speed)
+                ;(element as HTMLElement).style.transform = `translateY(${yPos}px)`
+            })
+        }
+
+        window.addEventListener("scroll", handleScroll)
+
+        return () => {
+            observer.disconnect()
+            window.removeEventListener("scroll", handleScroll)
+        }
     }, [])
 }
-
 
 export default function HomePageClient() {
     useScrollAnimation()
@@ -521,8 +534,6 @@ export default function HomePageClient() {
             </section>
             <EmailSignup />
 
-
-            {/* Process section with enhanced styling */}
             <section className="py-20 md:py-32 lg:py-48 bg-section-muted text-section-muted-foreground">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16 md:mb-24">
@@ -689,6 +700,7 @@ export default function HomePageClient() {
                     </div>
                 </div>
             </section>
+
 
             {/* Featured work section with regular background */}
             <section className="py-32 lg:py-48 bg-section-white text-section-white-foreground">
@@ -931,6 +943,50 @@ export default function HomePageClient() {
             {/*    </div>*/}
             {/*</section>*/}
 
+            {/*/!* CTA section with enhanced styling *!/*/}
+            {/*<section className="py-32 lg:py-48 bg-gradient-to-br from-primary via-accent to-standout text-white relative overflow-hidden">*/}
+            {/*    <div className="absolute inset-0 bg-black/20 parallax-bg"></div>*/}
+            {/*    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">*/}
+            {/*        <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-12 md:p-20 border border-white/20 shadow-2xl animate-fade-in-up">*/}
+            {/*            <h2 className="scroll-animate text-3xl md:text-4xl lg:text-5xl font-bold text-foreground font-sans mb-12 text-balance opacity-0 translate-y-8">*/}
+            {/*                Ready to Start Your <span className="text-standout">Project?</span>*/}
+            {/*            </h2>*/}
+            {/*            <p className="scroll-animate text-lg md:text-xl text-muted-foreground font-serif mb-16 text-pretty leading-relaxed opacity-0 translate-y-8 animation-delay-300">*/}
+            {/*                Let's discuss how we can help bring your vision to life. Get in touch for a free consultation and project*/}
+            {/*                quote.*/}
+            {/*            </p>*/}
+            {/*            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">*/}
+            {/*                <GetStartedButton*/}
+            {/*                    size="lg"*/}
+            {/*                    className="font-serif font-semibold text-base px-8 py-4 hover:scale-105 transition-transform"*/}
+            {/*                />*/}
+            {/*                <Button*/}
+            {/*                    asChild*/}
+            {/*                    variant="outline"*/}
+            {/*                    size="lg"*/}
+            {/*                    className="font-serif font-semibold bg-white/50 hover:bg-white text-base px-8 py-4 hover:scale-105 transition-transform"*/}
+            {/*                >*/}
+            {/*                    <Link href="/about">Learn More About Us</Link>*/}
+            {/*                </Button>*/}
+            {/*            </div>*/}
+
+            {/*            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-border/30">*/}
+            {/*                <div className="flex items-center justify-center gap-3 text-muted-foreground group hover:text-standout transition-colors">*/}
+            {/*                    <Clock className="w-6 h-6 text-standout group-hover:scale-110 transition-transform" />*/}
+            {/*                    <span className="font-serif text-base">Free Consultation</span>*/}
+            {/*                </div>*/}
+            {/*                <div className="flex items-center justify-center gap-3 text-muted-foreground group hover:text-standout transition-colors">*/}
+            {/*                    <Award className="w-6 h-6 text-standout group-hover:scale-110 transition-transform" />*/}
+            {/*                    <span className="font-serif text-base">Award-Winning Team</span>*/}
+            {/*                </div>*/}
+            {/*                <div className="flex items-center justify-center gap-3 text-muted-foreground group hover:text-standout transition-colors">*/}
+            {/*                    <TrendingUp className="w-6 h-6 text-standout group-hover:scale-110 transition-transform" />*/}
+            {/*                    <span className="font-serif text-base">Proven Results</span>*/}
+            {/*                </div>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</section>*/}
 
             <Footer />
 
