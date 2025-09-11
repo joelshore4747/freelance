@@ -16,7 +16,8 @@ export function Navigation() {
   ]
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border shadow-sm">
+      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b-2 border-gray-300 dark:border-gray-700 shadow-sm">
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -41,16 +42,19 @@ export function Navigation() {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <Button
-              variant="outline"
-              asChild
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-serif font-semibold bg-transparent"
-            >
-              <Link href="/contact">Contact Us</Link>
-            </Button>
-            <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground font-serif font-semibold">
-              <Link href="/contact">Get Started</Link>
-            </Button>
+            {/*<Button*/}
+            {/*  variant="outline"*/}
+            {/*  asChild*/}
+            {/*  className="border-slate-800 text-slate-800 hover:bg-slate-700 hover:text-primary-foreground font-serif font-semibold bg-transparent"*/}
+            {/*>*/}
+            {/*  <Link href="/contact">Contact Us</Link>*/}
+            {/*</Button>*/}
+              <Button
+                  asChild
+                  className="bg-slate-800 hover:bg-slate-700 text-white font-serif font-semibold"
+              >
+                  <Link href="/contact">Get Started</Link>
+              </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -76,18 +80,18 @@ export function Navigation() {
                 </Link>
               ))}
               <div className="px-3 py-2 space-y-2">
-                <Button
-                  variant="outline"
-                  asChild
-                  className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-serif font-semibold bg-transparent"
-                >
-                  <Link href="/contact">Contact Us</Link>
-                </Button>
-                <Button
-                  asChild
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-serif font-semibold"
-                >
-                  <Link href="/contact">Get Started</Link>
+                {/*<Button*/}
+                {/*  variant="outline"*/}
+                {/*  asChild*/}
+                {/*  className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-serif font-semibold bg-transparent"*/}
+                {/*>*/}
+                {/*  <Link href="/contact">Contact Us</Link>*/}
+                {/*</Button>*/}
+                  <Button
+                      asChild
+                      className="w-full bg-slate-800 hover:bg-slate-700 text-white font-serif font-semibold"
+                  >
+                      <Link href="/contact">Get Started</Link>
                 </Button>
               </div>
             </div>

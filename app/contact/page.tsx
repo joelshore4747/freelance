@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 import { ContactForm } from "@/components/contact-form"
+import {Navigation} from "@/components/navigation";
+import {EmailSignup} from "@/components/email-signup";
 
 export const metadata: Metadata = {
   title: "Contact Us - Design Studio | Get Your Project Started",
@@ -16,7 +18,9 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <main className="min-h-screen bg-background">
-      {/* Hero Section */}
+        <Navigation />
+
+        {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-balance">
@@ -67,6 +71,7 @@ export default function ContactPage() {
             </div>
           </div>
         </div>
+
       </section>
     </main>
   )

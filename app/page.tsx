@@ -26,6 +26,7 @@ import {
     ChevronLeft,
     ChevronRight,
 } from "lucide-react"
+import {EmailSignup} from "@/components/email-signup";
 
 function useCarousel(itemsLength: number) {
     const [currentIndex, setCurrentIndex] = useState(0)
@@ -67,47 +68,34 @@ function useCarousel(itemsLength: number) {
 
 function useScrollAnimation() {
     useEffect(() => {
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
         const observer = new IntersectionObserver(
             (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("animate-scroll-fade-up")
-                        // Add parallax effect to certain elements
-                        if (entry.target.classList.contains("parallax-element")) {
-                            entry.target.classList.add("animate-parallax-reveal")
-                        }
+                entries.forEach((entry, i) => {
+                    if (!entry.isIntersecting) return
+
+                    const run = () => {
+                        entry.target.classList.add("opacity-100", "translate-y-0")
+                        entry.target.classList.remove("opacity-0", "translate-y-3")
+                        observer.unobserve(entry.target) // animate once
+                    }
+
+                    if (prefersReducedMotion) {
+                        run()
+                    } else {
+                        setTimeout(run, i * 70) // tiny stagger
                     }
                 })
             },
-            {
-                threshold: 0.1,
-                rootMargin: "0px 0px -80px 0px", // Trigger animation earlier for smoother effect
-            },
+            { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
         )
 
-        const elements = document.querySelectorAll(".scroll-animate")
-        elements.forEach((el) => observer.observe(el))
-
-        // Add parallax scrolling effect
-        const handleScroll = () => {
-            const scrolled = window.pageYOffset
-            const parallaxElements = document.querySelectorAll(".parallax-bg")
-
-            parallaxElements.forEach((element) => {
-                const speed = 0.5
-                const yPos = -(scrolled * speed)
-                ;(element as HTMLElement).style.transform = `translateY(${yPos}px)`
-            })
-        }
-
-        window.addEventListener("scroll", handleScroll)
-
-        return () => {
-            observer.disconnect()
-            window.removeEventListener("scroll", handleScroll)
-        }
+        document.querySelectorAll<HTMLElement>(".scroll-animate").forEach((el) => observer.observe(el))
+        return () => observer.disconnect()
     }, [])
 }
+
 
 export default function HomePageClient() {
     useScrollAnimation()
@@ -196,7 +184,7 @@ export default function HomePageClient() {
     const servicesCarousel = useCarousel(servicesData.length)
     const worksCarousel = useCarousel(worksData.length)
     const testimonialsCarousel = useCarousel(testimonialsData.length)
-
+    const [activeStep, setActiveStep] = useState(0)
     return (
         <div className="min-h-screen bg-background">
             <Navigation />
@@ -531,24 +519,25 @@ export default function HomePageClient() {
                     </div>
                 </div>
             </section>
+            <EmailSignup />
+
 
             {/* Process section with enhanced styling */}
-            <section className="py-32 lg:py-48 bg-section-muted text-section-muted-foreground">
+            <section className="py-20 md:py-32 lg:py-48 bg-section-muted text-section-muted-foreground">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-24">
-                        <h2 className="scroll-animate text-3xl md:text-4xl lg:text-5xl font-bold text-section-muted-foreground font-sans mb-12 text-balance opacity-0 translate-y-8">
-                            Our <span className="text-primary">4-Stage</span> Process
+                    <div className="text-center mb-16 md:mb-24">
+                        <h2 className="scroll-animate text-3xl md:text-4xl lg:text-5xl font-bold text-section-muted-foreground font-sans mb-8 md:mb-12 text-balance opacity-0 translate-y-8">
+                            Our <span className="bg-standout text-white px-3 py-1 rounded-lg">4-Stage</span> Process
                         </h2>
-                        <p className="scroll-animate text-lg md:text-xl text-muted-foreground font-serif mb-16 text-pretty leading-relaxed opacity-0 translate-y-8 animation-delay-300">
+                        <p className="scroll-animate text-base md:text-lg lg:text-xl text-section-muted-foreground/80 font-serif mb-8 md:mb-16 text-pretty leading-relaxed opacity-0 translate-y-8 animation-delay-300">
                             A proven methodology that ensures your project is delivered on time, on budget, and exceeds expectations.
                         </p>
                     </div>
 
-                    <div className="relative">
-                        {/* Enhanced process line */}
-                        <div className="hidden lg:block absolute top-10 left-0 right-0 h-1 bg-gradient-to-r from-primary via-standout to-primary rounded-full animate-pulse"></div>
+                    <div className="hidden lg:block relative">
+                        <div className="absolute top-10 left-0 right-0 h-1 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 rounded-full"></div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                        <div className="grid grid-cols-4 gap-10">
                             {[
                                 {
                                     step: "01",
@@ -583,12 +572,118 @@ export default function HomePageClient() {
                                     <div className="w-20 h-20 bg-gradient-to-br from-primary to-standout rounded-3xl flex items-center justify-center text-white mb-6 mx-auto relative z-10 shadow-2xl group-hover:scale-110 transition-transform duration-300">
                                         {process.icon}
                                     </div>
-                                    <div className="text-sm font-bold text-primary font-sans mb-3">STEP {process.step}</div>
+                                    <div className="text-sm font-bold text-section-muted-foreground font-sans mb-3">
+                                        STEP {process.step}
+                                    </div>
                                     <h3 className="text-xl font-bold text-section-muted-foreground font-sans mb-4">{process.title}</h3>
-                                    <p className="text-muted-foreground font-serif text-pretty text-base leading-relaxed">
+                                    <p className="text-section-muted-foreground/80 font-serif text-pretty text-base leading-relaxed">
                                         {process.description}
                                     </p>
                                 </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="lg:hidden">
+                        <div className="flex justify-center mb-8">
+                            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3">
+                                {[1, 2, 3, 4].map((step, index) => (
+                                    <div key={step} className="flex items-center">
+                                        <button
+                                            onClick={() => setActiveStep(index)}
+                                            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                                                index === activeStep
+                                                    ? "bg-primary text-white scale-110"
+                                                    : "bg-white/20 text-section-muted-foreground hover:bg-white/30"
+                                            }`}
+                                        >
+                                            {step}
+                                        </button>
+                                        {index < 3 && <div className="w-6 h-0.5 bg-white/30" />}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex justify-center mb-6">
+                            <div className="w-72">
+                                {[
+                                    {
+                                        step: "01",
+                                        icon: <Users className="h-8 w-8" />,
+                                        title: "Discovery",
+                                        description:
+                                            "We align on goals, audience, scope, and success metrics with short workshops and research sprints.",
+                                        link: "What we deliver",
+                                    },
+                                    {
+                                        step: "02",
+                                        icon: <Target className="h-8 w-8" />,
+                                        title: "Strategy",
+                                        description:
+                                            "Information architecture, user flows, and low-fi wireframes that map the shortest path to value.",
+                                        link: "See approach",
+                                    },
+                                    {
+                                        step: "03",
+                                        icon: <Palette className="h-8 w-8" />,
+                                        title: "Design",
+                                        description:
+                                            "We craft beautiful, user-centered designs that reflect your brand identity and convert visitors.",
+                                        link: "View designs",
+                                    },
+                                    {
+                                        step: "04",
+                                        icon: <Rocket className="h-8 w-8" />,
+                                        title: "Launch",
+                                        description:
+                                            "We develop, test, and deploy your project with ongoing support and optimization for success.",
+                                        link: "Launch process",
+                                    },
+                                ].map((process, index) => (
+                                    <div
+                                        key={index}
+                                        className={`transition-all duration-500 ${
+                                            index === activeStep ? "opacity-100 scale-100" : "opacity-0 scale-95 absolute"
+                                        }`}
+                                    >
+                                        {index === activeStep && (
+                                            <div className="bg-white rounded-2xl p-8 shadow-2xl min-h-[400px] flex flex-col">
+                                                <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center text-white mb-6 mx-auto shadow-lg">
+                                                    {process.icon}
+                                                </div>
+
+                                                <div className="text-sm font-bold text-primary font-sans mb-4 text-center">
+                                                    STEP {process.step}
+                                                </div>
+
+                                                <h3 className="text-2xl font-bold text-gray-900 font-sans mb-4 text-center">{process.title}</h3>
+
+                                                <p className="text-gray-600 font-serif text-sm leading-relaxed text-center mb-8 flex-grow">
+                                                    {process.description}
+                                                </p>
+
+                                                <div className="text-center mt-auto">
+                                                    <button className="text-primary font-medium text-sm hover:text-primary/80 transition-colors">
+                                                        {process.link} →
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex justify-center gap-2">
+                            {[0, 1, 2, 3].map((index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setActiveStep(index)}
+                                    className={`h-2 rounded-full transition-all duration-300 ${
+                                        index === activeStep ? "w-8 bg-primary" : "w-2 bg-gray-300"
+                                    }`}
+                                />
                             ))}
                         </div>
                     </div>
@@ -716,170 +811,126 @@ export default function HomePageClient() {
                 </div>
             </section>
 
-            {/* Testimonials section with carousel for all screen sizes */}
-            <section className="py-32 lg:py-48 bg-section-secondary text-section-secondary-foreground">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-24">
-                        <h2 className="scroll-animate text-3xl md:text-4xl lg:text-5xl font-bold text-section-secondary-foreground font-sans mb-12 text-balance opacity-0 translate-y-8">
-                            What Our <span className="text-primary">Customers</span> Think
-                        </h2>
-                        <p className="scroll-animate text-lg md:text-xl text-muted-foreground font-serif max-w-3xl mx-auto text-pretty leading-relaxed opacity-0 translate-y-8 animation-delay-300">
-                            Don't just take our word for it. Here's what our clients have to say about working with us.
-                        </p>
-                    </div>
+            {/*/!* Testimonials section with carousel for all screen sizes *!/*/}
+            {/*<section className="py-32 lg:py-48 bg-section-secondary text-section-secondary-foreground">*/}
+            {/*    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">*/}
+            {/*        <div className="text-center mb-24">*/}
+            {/*            <h2 className="scroll-animate text-3xl md:text-4xl lg:text-5xl font-bold text-section-secondary-foreground font-sans mb-12 text-balance opacity-0 translate-y-8">*/}
+            {/*                What Our <span className="text-primary">Customers</span> Think*/}
+            {/*            </h2>*/}
+            {/*            <p className="scroll-animate text-lg md:text-xl text-muted-foreground font-serif max-w-3xl mx-auto text-pretty leading-relaxed opacity-0 translate-y-8 animation-delay-300">*/}
+            {/*                Don't just take our word for it. Here's what our clients have to say about working with us.*/}
+            {/*            </p>*/}
+            {/*        </div>*/}
 
-                    <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                        {testimonialsData.map((testimonial, index) => (
-                            <Card
-                                key={index}
-                                className="bg-white border-border shadow-soft hover:shadow-2xl transition-all duration-500 animate-fade-in-up hover:scale-105"
-                                style={{ animationDelay: `${index * 150}ms` }}
-                            >
-                                <CardContent className="pt-8">
-                                    <div className="flex mb-6">
-                                        {[...Array(testimonial.rating)].map((_, i) => (
-                                            <Star key={i} className="h-5 w-5 fill-standout text-standout" />
-                                        ))}
-                                    </div>
-                                    <blockquote className="text-foreground font-serif mb-8 text-pretty leading-relaxed text-base">
-                                        "{testimonial.quote}"
-                                    </blockquote>
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-14 h-14 rounded-full overflow-hidden bg-secondary">
-                                            <img
-                                                src={testimonial.avatar || "/placeholder.svg"}
-                                                alt={testimonial.author}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                        <div>
-                                            <div className="font-semibold text-foreground font-sans text-base">{testimonial.author}</div>
-                                            <div className="text-muted-foreground font-serif text-sm">{testimonial.role}</div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
+            {/*        <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">*/}
+            {/*            {testimonialsData.map((testimonial, index) => (*/}
+            {/*                <Card*/}
+            {/*                    key={index}*/}
+            {/*                    className="bg-white border-border shadow-soft hover:shadow-2xl transition-all duration-500 animate-fade-in-up hover:scale-105"*/}
+            {/*                    style={{ animationDelay: `${index * 150}ms` }}*/}
+            {/*                >*/}
+            {/*                    <CardContent className="pt-8">*/}
+            {/*                        <div className="flex mb-6">*/}
+            {/*                            {[...Array(testimonial.rating)].map((_, i) => (*/}
+            {/*                                <Star key={i} className="h-5 w-5 fill-standout text-standout" />*/}
+            {/*                            ))}*/}
+            {/*                        </div>*/}
+            {/*                        <blockquote className="text-foreground font-serif mb-8 text-pretty leading-relaxed text-base">*/}
+            {/*                            "{testimonial.quote}"*/}
+            {/*                        </blockquote>*/}
+            {/*                        <div className="flex items-center gap-4">*/}
+            {/*                            <div className="w-14 h-14 rounded-full overflow-hidden bg-secondary">*/}
+            {/*                                <img*/}
+            {/*                                    src={testimonial.avatar || "/placeholder.svg"}*/}
+            {/*                                    alt={testimonial.author}*/}
+            {/*                                    className="w-full h-full object-cover"*/}
+            {/*                                />*/}
+            {/*                            </div>*/}
+            {/*                            <div>*/}
+            {/*                                <div className="font-semibold text-foreground font-sans text-base">{testimonial.author}</div>*/}
+            {/*                                <div className="text-muted-foreground font-serif text-sm">{testimonial.role}</div>*/}
+            {/*                            </div>*/}
+            {/*                        </div>*/}
+            {/*                    </CardContent>*/}
+            {/*                </Card>*/}
+            {/*            ))}*/}
+            {/*        </div>*/}
 
-                    <div className="lg:hidden relative">
-                        <div
-                            ref={testimonialsCarousel.scrollRef}
-                            className="flex gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
-                            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-                        >
-                            {testimonialsData.map((testimonial, index) => (
-                                <Card
-                                    key={index}
-                                    className="bg-white border-border shadow-soft hover:shadow-2xl transition-all duration-500 flex-shrink-0 w-80 snap-center"
-                                >
-                                    <CardContent className="pt-8">
-                                        <div className="flex mb-6">
-                                            {[...Array(testimonial.rating)].map((_, i) => (
-                                                <Star key={i} className="h-5 w-5 fill-standout text-standout" />
-                                            ))}
-                                        </div>
-                                        <blockquote className="text-foreground font-serif mb-8 text-pretty leading-relaxed text-base">
-                                            "{testimonial.quote}"
-                                        </blockquote>
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-14 h-14 rounded-full overflow-hidden bg-secondary">
-                                                <img
-                                                    src={testimonial.avatar || "/placeholder.svg"}
-                                                    alt={testimonial.author}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
-                                            <div>
-                                                <div className="font-semibold text-foreground font-sans text-base">{testimonial.author}</div>
-                                                <div className="text-muted-foreground font-serif text-sm">{testimonial.role}</div>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
+            {/*        <div className="lg:hidden relative">*/}
+            {/*            <div*/}
+            {/*                ref={testimonialsCarousel.scrollRef}*/}
+            {/*                className="flex gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"*/}
+            {/*                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}*/}
+            {/*            >*/}
+            {/*                {testimonialsData.map((testimonial, index) => (*/}
+            {/*                    <Card*/}
+            {/*                        key={index}*/}
+            {/*                        className="bg-white border-border shadow-soft hover:shadow-2xl transition-all duration-500 flex-shrink-0 w-80 snap-center"*/}
+            {/*                    >*/}
+            {/*                        <CardContent className="pt-8">*/}
+            {/*                            <div className="flex mb-6">*/}
+            {/*                                {[...Array(testimonial.rating)].map((_, i) => (*/}
+            {/*                                    <Star key={i} className="h-5 w-5 fill-standout text-standout" />*/}
+            {/*                                ))}*/}
+            {/*                            </div>*/}
+            {/*                            <blockquote className="text-foreground font-serif mb-8 text-pretty leading-relaxed text-base">*/}
+            {/*                                "{testimonial.quote}"*/}
+            {/*                            </blockquote>*/}
+            {/*                            <div className="flex items-center gap-4">*/}
+            {/*                                <div className="w-14 h-14 rounded-full overflow-hidden bg-secondary">*/}
+            {/*                                    <img*/}
+            {/*                                        src={testimonial.avatar || "/placeholder.svg"}*/}
+            {/*                                        alt={testimonial.author}*/}
+            {/*                                        className="w-full h-full object-cover"*/}
+            {/*                                    />*/}
+            {/*                                </div>*/}
+            {/*                                <div>*/}
+            {/*                                    <div className="font-semibold text-foreground font-sans text-base">{testimonial.author}</div>*/}
+            {/*                                    <div className="text-muted-foreground font-serif text-sm">{testimonial.role}</div>*/}
+            {/*                                </div>*/}
+            {/*                            </div>*/}
+            {/*                        </CardContent>*/}
+            {/*                    </Card>*/}
+            {/*                ))}*/}
+            {/*            </div>*/}
 
-                        <div className="flex justify-center items-center gap-4 mt-8">
-                            <button
-                                onClick={testimonialsCarousel.prevSlide}
-                                className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
-                                aria-label="Previous testimonial"
-                            >
-                                <ChevronLeft className="w-5 h-5 text-primary" />
-                            </button>
+            {/*            <div className="flex justify-center items-center gap-4 mt-8">*/}
+            {/*                <button*/}
+            {/*                    onClick={testimonialsCarousel.prevSlide}*/}
+            {/*                    className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"*/}
+            {/*                    aria-label="Previous testimonial"*/}
+            {/*                >*/}
+            {/*                    <ChevronLeft className="w-5 h-5 text-primary" />*/}
+            {/*                </button>*/}
 
-                            <div className="flex gap-2">
-                                {testimonialsData.map((_, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => testimonialsCarousel.scrollToIndex(index)}
-                                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                                            index === testimonialsCarousel.currentIndex
-                                                ? "bg-standout w-6"
-                                                : "bg-primary/30 hover:bg-primary/50"
-                                        }`}
-                                        aria-label={`Go to testimonial ${index + 1}`}
-                                    />
-                                ))}
-                            </div>
+            {/*                <div className="flex gap-2">*/}
+            {/*                    {testimonialsData.map((_, index) => (*/}
+            {/*                        <button*/}
+            {/*                            key={index}*/}
+            {/*                            onClick={() => testimonialsCarousel.scrollToIndex(index)}*/}
+            {/*                            className={`w-2 h-2 rounded-full transition-all duration-300 ${*/}
+            {/*                                index === testimonialsCarousel.currentIndex*/}
+            {/*                                    ? "bg-standout w-6"*/}
+            {/*                                    : "bg-primary/30 hover:bg-primary/50"*/}
+            {/*                            }`}*/}
+            {/*                            aria-label={`Go to testimonial ${index + 1}`}*/}
+            {/*                        />*/}
+            {/*                    ))}*/}
+            {/*                </div>*/}
 
-                            <button
-                                onClick={testimonialsCarousel.nextSlide}
-                                className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
-                                aria-label="Next testimonial"
-                            >
-                                <ChevronRight className="w-5 h-5 text-primary" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {/*                <button*/}
+            {/*                    onClick={testimonialsCarousel.nextSlide}*/}
+            {/*                    className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"*/}
+            {/*                    aria-label="Next testimonial"*/}
+            {/*                >*/}
+            {/*                    <ChevronRight className="w-5 h-5 text-primary" />*/}
+            {/*                </button>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</section>*/}
 
-            {/* CTA section with enhanced styling */}
-            <section className="py-32 lg:py-48 bg-gradient-to-br from-primary via-accent to-standout text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-black/20 parallax-bg"></div>
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-                    <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-12 md:p-20 border border-white/20 shadow-2xl animate-fade-in-up">
-                        <h2 className="scroll-animate text-3xl md:text-4xl lg:text-5xl font-bold text-foreground font-sans mb-12 text-balance opacity-0 translate-y-8">
-                            Ready to Start Your <span className="text-standout">Project?</span>
-                        </h2>
-                        <p className="scroll-animate text-lg md:text-xl text-muted-foreground font-serif mb-16 text-pretty leading-relaxed opacity-0 translate-y-8 animation-delay-300">
-                            Let's discuss how we can help bring your vision to life. Get in touch for a free consultation and project
-                            quote.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
-                            <GetStartedButton
-                                size="lg"
-                                className="font-serif font-semibold text-base px-8 py-4 hover:scale-105 transition-transform"
-                            />
-                            <Button
-                                asChild
-                                variant="outline"
-                                size="lg"
-                                className="font-serif font-semibold bg-white/50 hover:bg-white text-base px-8 py-4 hover:scale-105 transition-transform"
-                            >
-                                <Link href="/about">Learn More About Us</Link>
-                            </Button>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-border/30">
-                            <div className="flex items-center justify-center gap-3 text-muted-foreground group hover:text-standout transition-colors">
-                                <Clock className="w-6 h-6 text-standout group-hover:scale-110 transition-transform" />
-                                <span className="font-serif text-base">Free Consultation</span>
-                            </div>
-                            <div className="flex items-center justify-center gap-3 text-muted-foreground group hover:text-standout transition-colors">
-                                <Award className="w-6 h-6 text-standout group-hover:scale-110 transition-transform" />
-                                <span className="font-serif text-base">Award-Winning Team</span>
-                            </div>
-                            <div className="flex items-center justify-center gap-3 text-muted-foreground group hover:text-standout transition-colors">
-                                <TrendingUp className="w-6 h-6 text-standout group-hover:scale-110 transition-transform" />
-                                <span className="font-serif text-base">Proven Results</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             <Footer />
 
